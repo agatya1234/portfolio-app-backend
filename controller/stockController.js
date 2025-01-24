@@ -18,8 +18,27 @@ const addStock = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const stock = new Stock({ userId, name, ticker, quantity, buyPrice });
-    await stock.save();
+    // Check if the stock already exists in the database for the user
+    const stockInDB = await Stock.findOne({ userId, name });
+    let stock;
+
+    if (stockInDB) {
+      // Update the existing stock's quantity and recalculate the average buy price
+      const newQuantity = stockInDB.quantity + parseInt(quantity);
+      const newBuyPrice =
+        (stockInDB.buyPrice * stockInDB.quantity + buyPrice * quantity) / newQuantity;
+
+      stock = await Stock.findByIdAndUpdate(
+        stockInDB._id,
+        { quantity: newQuantity, buyPrice: newBuyPrice },
+        { new: true } // Return the updated document
+      );
+    } else {
+      // Create a new stock entry
+      stock = new Stock({ userId, name, ticker, quantity, buyPrice });
+      await stock.save();
+    }
+
     res.status(201).json({ message: "Stock added successfully", data: stock })
   } catch (error) {
     res.status(500).json({ message: 'Error adding stock', error });
