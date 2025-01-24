@@ -1,10 +1,10 @@
 import express from "express";
-import { addStock, getStocks } from "../controller/stockController.js";
+import { addStock, deleteStock, getStocks, updateStock } from "../controller/stockController.js";
 const router = express.Router();
 
 router.get('/', getStocks)
 router.post('/', addStock)
-router.put('/:id', addStock)
-router.delete('/:id', addStock)
+router.put('/:id', updateStock)
+router.delete('/:id', deleteStock)
 
 export default router;
