@@ -77,7 +77,7 @@ const getStocks = async (req, res) => {
       },
     })
   } catch (error) {
-    res.status(400).json({ message: "Can not get stocks", error: error })
+    res.status(400).json({ message: "Can not get stocks" })
   }
 };
 
