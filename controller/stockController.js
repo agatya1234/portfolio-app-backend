@@ -42,7 +42,7 @@ const getStocks = async (req, res) => {
     let highestPnL = -Infinity;
 
     // Calculate portfolio metrics
-    const enrichedStocks = stocks.map(stock => {
+    const enrichedStocks = stocks?.map(stock => {
       const liveStock = liveData?.body?.find(data => data.symbol === stock.ticker);
       if (!liveStock) return { ...stock.toObject(), currentValue: 0, pnl: 0 };
 
@@ -67,8 +67,9 @@ const getStocks = async (req, res) => {
 
     const pnlTotal = current - invested;
 
-    res.json({
-      status: "200", data: stocks, portfolio: {
+    res.status(200).json({
+      data: enrichedStocks,
+      portfolio: {
         invested,
         current,
         pnlTotal,
@@ -76,7 +77,7 @@ const getStocks = async (req, res) => {
       },
     })
   } catch (error) {
-    res.json({ status: "400", message: "Can not get stocks" })
+    res.status(400).json({ message: "Can not get stocks" })
   }
 };
 
